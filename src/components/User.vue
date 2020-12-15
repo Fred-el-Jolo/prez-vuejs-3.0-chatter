@@ -1,7 +1,7 @@
 <template>
-  <div class="user">
+  <div :class="cssClasses">
       <avatar class="user__avatar" v-if="avatar" :avatar="avatar"/>
-      <span class="user__name">{{ name }}</span>
+      <span class="user__name">{{ displayName }}</span>
       <span class="user__action-date" v-if="date">,&nbsp;{{ formattedDate }}</span>
   </div>
 </template>
@@ -17,17 +17,33 @@ export default {
     name: String,
     avatar: String,
     date: Date,
+    current: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {
       formattedDate: this.formatDate(this.date),
+      intervalId: null,
     }
   },
   mounted() {
-    window.setInterval(() => {
+    this.intervalId = window.setInterval(() => {
       this.formattedDate = this.formatDate(this.date);
-      console.log(this.formattedDate);
+      //console.log(this.formattedDate);
     }, 20000);
+  },
+  beforeUnmount() {
+    window.clearInterval(this.intervalId);
+  },
+  computed: {
+    cssClasses() {
+      return ['user', {current: this.current}];
+    },
+    displayName() {
+      return `${this.current ? 'Connected as ' : ''}${this.name}`;
+    }
   },
   methods: {
     formatDate(date) {
@@ -44,6 +60,10 @@ export default {
 .user {
     &__avatar {
       margin-right: 1em;
+    }
+
+    &.current {
+      font-weight: 600;
     }
 }
 </style>
