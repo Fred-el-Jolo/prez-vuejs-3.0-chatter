@@ -23,73 +23,84 @@ import MessageInput from '@/components/MessageInput';
 import IconButton from '@/components/base/IconButton'
 import User from '@/components/User';
 import marked from 'marked';
+import { generateUID } from '@/utils/uid-utils.js';
 import { generateUsers, generateMessage } from '@/utils/activity-generator.js'
-import { nextTick } from 'vue';
+import { ref, computed, watch, nextTick } from 'vue';
 
 export default {
   name: 'Chat',
   components: {
-    Panel, Message, MessageInput, IconButton, User
+    Panel,
+    Message,
+    MessageInput,
+    IconButton,
+    User,
   },
   props: {
     userName: String,
     avatar: String,
   },
-  data() {
-    return {
-      connectedUsers: [],
-      messages: [],
-      markdown: '',
-    };
-  },
-  created() {
+  setup(props) {
+    // Users
+    const connectedUsers = ref([]);
+    const userId = generateUID();
+    
+    // No onCreated hook, just do it there !!!
     // Init the array with the current user
-    this.connectedUsers = [{
-      id: '0',
-      author: this.userName,
-      avatar: this.avatar,
+    connectedUsers.value = [{
+      id: userId,
+      author: props.userName,
+      avatar: props.avatar,
     }];
 
     // Generate random users, and always add the current user
     generateUsers((users) => {
-      this.connectedUsers =  [...users];
-      this.connectedUsers.unshift({
-        id: '0',
-        author: this.userName,
-        avatar: this.avatar,
+      connectedUsers.value =  [...users];
+      connectedUsers.value.unshift({
+        id: userId,
+        author: props.userName,
+        avatar: props.avatar,
       })
     });
 
+    // Messages
+    const messages = ref([]);
+    const messageNumber = computed(() => messages.value.length);
+    const markdown= ref('');
+    
+    // No onCreated hook, just do it there !!!
     // Generate random messages
     generateMessage((message) => {
-      this.messages = this.messages.concat([message]);
+      messages.value = messages.value.concat([message]);
     });
-  },
-  methods: {
-    submitMessage() {
-      this.messages = this.messages.concat([{
-        id:'c',
-        author: this.userName,
-        avatar: this.avatar,
+
+    // submit method
+    const submitMessage = () => {
+      messages.value = messages.value.concat([{
+        id:userId,
+        author: props.userName,
+        avatar: props.avatar,
         date: new Date(),
-        html: marked(this.markdown),
+        html: marked(markdown.value),
       }]);
-      this.markdown = '';
+      markdown.value = '';
     }
-  },
-  computed: {
-    messageNumber() {
-      return this.messages.length;
-    }
-  },
-  watch: {
-    messages() {
+
+    // Watch messages in order to scroll to bottom on re-rendering 
+    watch(messages, () => {
       nextTick(() => {
-        // Scroll to bottom on re-rendering
         window.scrollTo(0, document.body.scrollHeight || document.documentElement.scrollHeight);
       });
+    });
+
+    return {
+      connectedUsers,
+      messages,
+      messageNumber,
+      markdown,
+      submitMessage,
     }
-  }
+  },
 }
 </script>
 
@@ -99,9 +110,9 @@ export default {
 }
 
 .connected-users {
-  position: sticky;
-  top: 20px;
-  left: 20px;
+  position: fixed;
+  top: 30px;
+  left: 30px;
   width: 300px;
   
   &__container {

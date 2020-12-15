@@ -24,6 +24,9 @@ export default {
     date: Date,
   },
   computed: {
+    /**
+     * Sanitize html to prevent attacks
+     */
       sanitizedHtml() {
         return DOMPurify.sanitize(this.html);
       }
