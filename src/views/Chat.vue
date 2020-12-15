@@ -99,9 +99,9 @@ export default {
 }
 
 .connected-users {
-  position: sticky;
-  top: 20px;
-  left: 20px;
+  position: fixed;
+  top: 30px;
+  left: 30px;
   width: 300px;
   
   &__container {

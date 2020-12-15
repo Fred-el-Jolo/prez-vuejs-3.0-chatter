@@ -1,6 +1,6 @@
 <template>
   <div class="Panel">
-    <div class="Panel__header" v-if="displayHeader">
+    <div class="Panel__header">
         <slot name="header"></slot>
     </div>
     <div class="Panel__body">
@@ -11,13 +11,7 @@
 
 <script>
 export default {
-  name: 'IconButton',
-  props: {
-      displayHeader: {
-          type: Boolean,
-          default: true,
-      }
-  },
+  name: 'Panel',
 }
 </script>
 
