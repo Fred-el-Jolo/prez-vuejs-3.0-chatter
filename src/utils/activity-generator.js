@@ -22,6 +22,10 @@ const generateRandomTimeout30 = function() {
     return Math.floor(Math.random() * 30000 + 30000);
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 /**
  * [Useless] random number generator
  */
@@ -38,7 +42,10 @@ const generateName = function(){
     return generateMessages(names).next().value;
 };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 /**
  * Generate random text messages
  */
